@@ -1,4 +1,4 @@
-var usingsave = (typeof (Storage) !== "undefined") && localStorage.getItem("money");
+var usingsave = (typeof (Storage) !== "undefined") && localStorage.getItem("playerpokename");
 
 
 var overworldmusic = new Audio("route-1.mp3");
@@ -20,6 +20,7 @@ var playerx;
 var playery;
 var checkpointx;
 var checkpointy;
+var playerdir;
 if (usingsave) {
 	console.log("USING SAVE");
 	money = parseInt(localStorage.getItem("money"));
@@ -32,6 +33,11 @@ if (usingsave) {
 
 	checkpointx = parseInt(localStorage.getItem("checkpointx"));
 	checkpointy = parseInt(localStorage.getItem("checkpointy"));
+	
+	playerdir = parseInt(localStorage.getItem("playerdir"));
+	if(typeof(playerdir) === "undefined") {
+		playerdir = DOWN;
+	}
 } else {
 	money = 0;
 
@@ -42,6 +48,8 @@ if (usingsave) {
 
 	checkpointx = 7;
 	checkpointy = 4;
+	
+	playerdir = DOWN;
 }
 console.log(playerpoke);
 var keys = [
@@ -84,7 +92,6 @@ var grasspokes = [
 //console.log(playerpoke);
 var playerscreenx;
 var playerscreeny;
-var playerdir = DOWN;
 var playerstopping = false;
 var fps = 60;
 var dt = Math.round(1000 / fps);
@@ -253,6 +260,7 @@ window.onload = function () {
 			localStorage.setItem("money", money.toString());
 			localStorage.setItem("checkpointx", checkpointx.toString());
 			localStorage.setItem("checkpointy", checkpointy.toString());
+			localStorage.setItem("playerdir", playerdir.toString());
 		}
 
 		savecounter = savecountdown;
