@@ -1,16 +1,5 @@
 var usingsave = (typeof (Storage) !== "undefined") && localStorage.getItem("playerpokename");
 
-function clone(obj) {
-	if (obj == null || typeof (obj) != 'object')
-		return obj;
-
-	var temp = new obj.constructor();
-	for (var key in obj)
-		temp[key] = clone(obj[key]);
-
-	return temp;
-}
-
 
 var overworldmusic = new Audio("route-1.mp3");
 overworldmusic.play();
@@ -184,7 +173,7 @@ var setstate = function (name) {
 			textbeingshown += "!";
 
 			money += moneywon;
-			if (typeof (currenttrainerbattleindex) !== "undefined") {
+			if (currenttrainerbattleindex != null) {
 				console.log("TRAINER WIN");
 				trainers[currenttrainerbattleindex][5] = true;
 			}
