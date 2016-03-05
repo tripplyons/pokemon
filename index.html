@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<title>Pokemon</title>
+</head>
+
+<body style="text-align: center;">
+	<div style="width: 100%; height: 100vh; background-image: url('bg.png'); background-repeat: no-repeat; background-size: cover; background-attachment: fixed; position: fixed; z-index: 0"></div>
+	<div style="position: relative; z-index: 1;">
+		<canvas id="canvas" width="480" height="288" style="margin-top: 32px; "></canvas>
+		<br />Arrows = Move
+		<br />Space = Action
+		<br />1 = Move 1
+		<br />2 = Move 2
+		<br />3 = Move 3
+	</div>
+
+	<script src="lib.js"></script>
+	<script src="tiletype.js"></script>
+	<script src="map.js"></script>
+	<script src="pokedata.js"></script>
+	<script src="pokemon.js"></script>
+	<script src="battle.js"></script>
+	<script src="main.js"></script>
+</body>
+
+</html>
