@@ -1,5 +1,16 @@
 var usingsave = (typeof (Storage) !== "undefined") && localStorage.getItem("playerpokename");
 
+function clone(obj) {
+	if (obj == null || typeof (obj) != 'object')
+		return obj;
+
+	var temp = new obj.constructor();
+	for (var key in obj)
+		temp[key] = clone(obj[key]);
+
+	return temp;
+}
+
 
 var overworldmusic = new Audio("route-1.mp3");
 overworldmusic.play();
@@ -47,16 +58,16 @@ if (usingsave) {
 
 	playerdir = parseInt(localStorage.getItem("playerdir"));
 	console.log(playerdir);
-	if (typeof (playerdir) === "undefined" || playerdir == null ||isNaN(playerdir)) {
+	if (typeof (playerdir) === "undefined" || playerdir == null || isNaN(playerdir)) {
 		console.log("FIX PLAYERDIR");
 		playerdir = DOWN;
 		console.log(playerdir);
 	}
-	
+
 	var trainersbeaten = JSON.parse(localStorage.getItem("trainersbeaten"));
-	if(typeof (trainersbeaten) !== "undefined" && trainersbeaten != null) {
+	if (typeof (trainersbeaten) !== "undefined" && trainersbeaten != null) {
 		console.log("SET TRAINERS BEATEN");
-		for(var i=0; i<trainersbeaten.length; i++) {
+		for (var i = 0; i < trainersbeaten.length; i++) {
 			trainers[i][5] = trainersbeaten[i];
 		}
 	}
@@ -536,7 +547,7 @@ window.onload = function () {
 						var trainer = trainerat(playerx, playery - 1);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
-							var opposing = trainer.trainer[4];
+							var opposing = Object.create(trainer.trainer[4]);
 							currentbattle = new Battle(playerpoke, opposing, false);
 							battlingaftertrainertext = true;
 							currenttrainerbattleindex = trainer.index;
@@ -548,7 +559,7 @@ window.onload = function () {
 						var trainer = trainerat(playerx, playery + 1);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
-							var opposing = trainer.trainer[4];
+							var opposing = Object.create(trainer.trainer[4]);
 							currentbattle = new Battle(playerpoke, opposing, false);
 							battlingaftertrainertext = true;
 							currenttrainerbattleindex = trainer.index;
@@ -559,7 +570,7 @@ window.onload = function () {
 						var trainer = trainerat(playerx - 1, playery);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
-							var opposing = trainer.trainer[4];
+							var opposing = Object.create(trainer.trainer[4]);
 							currentbattle = new Battle(playerpoke, opposing, false);
 							battlingaftertrainertext = true;
 							currenttrainerbattleindex = trainer.index;
@@ -570,7 +581,7 @@ window.onload = function () {
 						var trainer = trainerat(playerx + 1, playery);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
-							var opposing = trainer.trainer[4];
+							var opposing = Object.create(trainer.trainer[4]);
 							currentbattle = new Battle(playerpoke, opposing, false);
 							battlingaftertrainertext = true;
 							currenttrainerbattleindex = trainer.index;
