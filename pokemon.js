@@ -1,4 +1,4 @@
-var Pokemon = function (name, level) {
+var Pokemon = function (name, level, exp) {
 	this.name = name;
 	this.level = level;
 	this.moves = this.getMoves();
@@ -8,7 +8,7 @@ var Pokemon = function (name, level) {
 	this.front.src = "pokesprites/" + this.name + ".png";
 	this.back = new Image();
 	this.back.src = "pokesprites/" + this.name + "-back.png";
-	this.exp = 0;
+	this.exp = exp || 0;
 }
 
 Pokemon.prototype.getMoves = function () {
@@ -53,9 +53,6 @@ Pokemon.prototype.takeDamage = function (otherpoke, move) {
 }
 
 Pokemon.prototype.getExp = function (expAmount) {
-	if(this.level === 100) {
-		return;
-	}
 	this.exp += expAmount;
 	while(this.exp >= (this.level+1)*(this.level+1)*(this.level+1)) {
 		this.level += 1;

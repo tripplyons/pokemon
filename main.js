@@ -1,3 +1,6 @@
+var usingsave = (typeof (Storage) !== "undefined");
+
+
 var overworldmusic = new Audio("route-1.mp3");
 overworldmusic.play();
 overworldmusic.addEventListener("ended", function (e) {
@@ -11,7 +14,36 @@ battlemusic.addEventListener("ended", function (e) {
 var winlevel = null;
 var currentbattle = null;
 var tilesize = 32;
-var money = localStorage.getItem("money") || 0;
+var money;
+var playerpoke;
+var playerx;
+var playery;
+var checkpointx;
+var checkpointy;
+if (usingsave) {
+	console.log("USING SAVE");
+	money = parseInt(localStorage.getItem("money"));
+
+	playerpoke = new Pokemon(localStorage.getItem("playerpokename"), parseInt(localStorage.getItem("playerpokelevel")), parseInt(localStorage.getItem("playerpokeexp")));
+	console.log(playerpoke.exp);
+
+	playerx = parseInt(localStorage.getItem("playerx"));
+	playery = parseInt(localStorage.getItem("playery"));
+
+	checkpointx = parseInt(localStorage.getItem("checkpointx"));
+	checkpointy = parseInt(localStorage.getItem("checkpointy"));
+} else {
+	money = 0;
+
+	playerpoke = new Pokemon("pikachu", 5);
+
+	playerx = 7;
+	playery = 4;
+
+	checkpointx = 7;
+	checkpointy = 4;
+}
+console.log(playerpoke);
 var keys = [
 	false,
 	false,
@@ -23,7 +55,7 @@ var keys = [
 	false
 ];
 var savecounter = 0;
-var savecountdown = 1800;
+var savecountdown = 600;
 var pickingmove = false;
 var garySprite = new Image();
 garySprite.src = "gary.png";
@@ -42,19 +74,14 @@ var canvaswidth;
 var canvasheight;
 var shownTilesWidth;
 var shownTilesHeight;
-var playerx = parseInt(localStorage.getItem("playerx")) || 7;
-var playery = parseInt(localStorage.getItem("playery")) || 4;
-console.log(playerx, playery);
+//console.log(playerx, playery);
 var waitingforonblocksave = false;
-var checkpointx = parseInt(localStorage.getItem("checkpointx")) || 7;
-var checkpointy = parseInt(localStorage.getItem("checkpointy")) || 4;
-var playerpoke = JSON.parse(localStorage.getItem("playerpoke")) || new Pokemon("pikachu", 5);
 var grasspokes = [
 	new Pokemon("rattata", 3),
 	new Pokemon("rattata", 4),
 	new Pokemon("rattata", 5)
 ];
-console.log(playerpoke);
+//console.log(playerpoke);
 var playerscreenx;
 var playerscreeny;
 var playerdir = DOWN;
@@ -216,8 +243,11 @@ var playermovecamerainterval = 0.0625;
 
 window.onload = function () {
 	var save = function () {
-		if (typeof (Storage) !== "undefined"); {
-			localStorage.setItem("playerpoke", JSON.stringify(playerpoke));
+		console.log("SAVE");
+		if (typeof (Storage) !== "undefined") {
+			localStorage.setItem("playerpokename", playerpoke.name);
+			localStorage.setItem("playerpokelevel", playerpoke.level.toString());
+			localStorage.setItem("playerpokeexp", playerpoke.exp.toString());
 			localStorage.setItem("playerx", playerx.toString());
 			localStorage.setItem("playery", playery.toString());
 			localStorage.setItem("money", money.toString());
@@ -491,8 +521,6 @@ window.onload = function () {
 			}
 
 			if (savecounter <= 0) {
-				console.log("SAVE");
-
 				if (onblock()) {
 					save();
 				} else {
