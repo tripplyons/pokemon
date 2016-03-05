@@ -38,6 +38,19 @@ var pokedata = {
 			"spa": 25,
 			"spd": 35,
 			"spe": 72
+		},
+		"eevee": {
+			"name": "Eevee",
+			"type": "normal",
+			"moves": [
+				["tackle"]
+			],
+			"hp": 55,
+			"atk": 55,
+			"def": 50,
+			"spa": 45,
+			"spd": 65,
+			"spe": 55
 		}
 	}
 };
