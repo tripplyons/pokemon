@@ -269,8 +269,13 @@ document.addEventListener("keyup", function (e) {
 var playermovecamerainterval = 0.0625;
 
 window.onload = function () {
+	var savedtext = document.getElementById("saved");
 	var save = function () {
 		console.log("SAVE");
+		FX.fadeOut(savedtext, {
+			duration: savecountdown / fps * 1000 / 4,
+			complete: function () {}
+		});
 		if (typeof (Storage) !== "undefined") {
 			localStorage.setItem("playerpokename", playerpoke.name);
 			localStorage.setItem("playerpokelevel", playerpoke.level.toString());
@@ -577,24 +582,24 @@ window.onload = function () {
 						}
 					}
 				}
+
+				if (waitingforonblocksave && onblock()) {
+					waitingforonblocksave = false;
+					save();
+				}
+
+				if (savecounter <= 0) {
+					if (onblock()) {
+						save();
+					} else {
+						waitingforonblocksave = true;
+					}
+				}
+
+				savecounter--;
 			} else if (state === "battle") {
 				currentbattle.update();
 			}
-
-			if (waitingforonblocksave && onblock()) {
-				waitingforonblocksave = false;
-				save();
-			}
-
-			if (savecounter <= 0) {
-				if (onblock()) {
-					save();
-				} else {
-					waitingforonblocksave = true;
-				}
-			}
-
-			savecounter--;
 		}, dt);
 	}
 
