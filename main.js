@@ -11,6 +11,15 @@ battlemusic.addEventListener("ended", function (e) {
 	battlemusic.play();
 }, false);
 
+var UP = 0;
+var DOWN = 1;
+var LEFT = 2;
+var RIGHT = 3;
+var ACTION = 4;
+var ONE = 5;
+var TWO = 6;
+var THREE = 7;
+
 var winlevel = null;
 var currentbattle = null;
 var tilesize = 32;
@@ -32,11 +41,13 @@ if (usingsave) {
 
 	checkpointx = parseInt(localStorage.getItem("checkpointx"));
 	checkpointy = parseInt(localStorage.getItem("checkpointy"));
-	
+
 	playerdir = parseInt(localStorage.getItem("playerdir"));
 	console.log(playerdir);
-	if(typeof(playerdir) === "undefined" || isNaN(playerdir)) {
+	if (typeof (playerdir) === "undefined" || isNaN(playerdir)) {
+		console.log("FIX PLAYERDIR");
 		playerdir = DOWN;
+		console.log(playerdir);
 	}
 } else {
 	money = 0;
@@ -48,7 +59,7 @@ if (usingsave) {
 
 	checkpointx = 7;
 	checkpointy = 4;
-	
+
 	playerdir = DOWN;
 }
 console.log(playerpoke);
@@ -70,14 +81,6 @@ garySprite.src = "gary.png";
 // [sprite, x, y, text]
 var trainers = [[garySprite, 11, 4, "Hello!"]];
 var oldkeys = keys;
-var UP = 0;
-var DOWN = 1;
-var LEFT = 2;
-var RIGHT = 3;
-var ACTION = 4;
-var ONE = 5;
-var TWO = 6;
-var THREE = 7;
 var canvaswidth;
 var canvasheight;
 var shownTilesWidth;
@@ -339,7 +342,6 @@ window.onload = function () {
 					ctx.drawImage(trainers[i][0], Math.round((trainers[i][1] - playerx) * tilesize + playerscreenx), Math.round((trainers[i][2] - playery) * tilesize + playerscreeny) - 12);
 				}
 			}
-
 			ctx.drawImage(playeranimimg[directiontable[playerdir] + playeranim[currentanimindex]], playerscreenx, playerscreeny - 6);
 
 			for (var i = 0; i < trainers.length; i++) {
