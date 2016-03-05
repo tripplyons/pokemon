@@ -1,2 +1,2 @@
-# pokemon
+# Pokemon
 Pokemon in JavaScript
