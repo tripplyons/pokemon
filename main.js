@@ -26,7 +26,6 @@ if (usingsave) {
 	money = parseInt(localStorage.getItem("money"));
 
 	playerpoke = new Pokemon(localStorage.getItem("playerpokename"), parseInt(localStorage.getItem("playerpokelevel")), parseInt(localStorage.getItem("playerpokeexp")));
-	console.log(playerpoke.exp);
 
 	playerx = parseInt(localStorage.getItem("playerx"));
 	playery = parseInt(localStorage.getItem("playery"));
@@ -35,7 +34,8 @@ if (usingsave) {
 	checkpointy = parseInt(localStorage.getItem("checkpointy"));
 	
 	playerdir = parseInt(localStorage.getItem("playerdir"));
-	if(typeof(playerdir) === "undefined") {
+	console.log(playerdir);
+	if(typeof(playerdir) === "undefined" || isNaN(playerdir)) {
 		playerdir = DOWN;
 	}
 } else {
