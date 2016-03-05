@@ -1,4 +1,4 @@
-var usingsave = (typeof (Storage) !== "undefined");
+var usingsave = (typeof (Storage) !== "undefined") && localStorage.getItem("money");
 
 
 var overworldmusic = new Audio("route-1.mp3");
