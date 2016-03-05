@@ -30,6 +30,9 @@ var playery;
 var checkpointx;
 var checkpointy;
 var playerdir;
+var garySprite = new Image();
+garySprite.src = "gary.png";
+var trainers = [[garySprite, 11, 4, "Hello!", new Pokemon("eevee", 5), false]];
 if (usingsave) {
 	console.log("USING SAVE");
 	money = parseInt(localStorage.getItem("money"));
@@ -44,10 +47,18 @@ if (usingsave) {
 
 	playerdir = parseInt(localStorage.getItem("playerdir"));
 	console.log(playerdir);
-	if (typeof (playerdir) === "undefined" || isNaN(playerdir)) {
+	if (typeof (playerdir) === "undefined" || playerdir == null ||isNaN(playerdir)) {
 		console.log("FIX PLAYERDIR");
 		playerdir = DOWN;
 		console.log(playerdir);
+	}
+	
+	var trainersbeaten = JSON.parse(localStorage.getItem("trainersbeaten"));
+	if(typeof (trainersbeaten) !== "undefined" && trainersbeaten != null) {
+		console.log("SET TRAINERS BEATEN");
+		for(var i=0; i<trainersbeaten.length; i++) {
+			trainers[i][5] = trainersbeaten[i];
+		}
 	}
 } else {
 	money = 0;
@@ -76,12 +87,9 @@ var keys = [
 var savecounter = 0;
 var savecountdown = 600;
 var pickingmove = false;
-var garySprite = new Image();
-garySprite.src = "gary.png";
 // [sprite, x, y, text, poke, beaten]
 var battlingaftertrainertext = false;
 var currenttrainerbattleindex = null;
-var trainers = [[garySprite, 11, 4, "Hello!", new Pokemon("eevee", 5), false]];
 var oldkeys = keys;
 var canvaswidth;
 var canvasheight;
@@ -273,6 +281,9 @@ window.onload = function () {
 			localStorage.setItem("checkpointx", checkpointx.toString());
 			localStorage.setItem("checkpointy", checkpointy.toString());
 			localStorage.setItem("playerdir", playerdir.toString());
+			localStorage.setItem("trainersbeaten", JSON.stringify(trainers.map(function (arg) {
+				return arg[5];
+			})));
 		}
 
 		savecounter = savecountdown;
