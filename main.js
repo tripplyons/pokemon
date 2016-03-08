@@ -11,6 +11,8 @@ battlemusic.addEventListener("ended", function (e) {
 	battlemusic.play();
 }, false);
 
+var currentmap;
+
 var UP = 0;
 var DOWN = 1;
 var LEFT = 2;
@@ -30,9 +32,18 @@ var playery;
 var checkpointx;
 var checkpointy;
 var playerdir;
-var garySprite = new Image();
-garySprite.src = "gary.png";
-var trainers = [[garySprite, 11, 4, "Hello!", new Pokemon("eevee", 5), false]];
+var currentmapindex = 0;
+var money = 0;
+
+var playerpoke = new Pokemon("pikachu", 5);
+
+var playerx = 7;
+var playery = 4;
+
+var checkpointx = 7;
+var checkpointy = 4;
+
+var playerdir = DOWN;
 if (usingsave) {
 	console.log("USING SAVE");
 	money = parseInt(localStorage.getItem("money"));
@@ -45,33 +56,11 @@ if (usingsave) {
 	checkpointx = parseInt(localStorage.getItem("checkpointx"));
 	checkpointy = parseInt(localStorage.getItem("checkpointy"));
 
-	playerdir = parseInt(localStorage.getItem("playerdir"));
-	console.log(playerdir);
-	if (typeof (playerdir) === "undefined" || playerdir == null || isNaN(playerdir)) {
-		console.log("FIX PLAYERDIR");
-		playerdir = DOWN;
+	var storeddir = localStorage.getItem("playerdir");
+	if (typeof (storeddir) !== "undefined" && storeddir != null) {
+		playerdir = parseInt(localStorage.getItem("playerdir"));
 		console.log(playerdir);
 	}
-
-	var trainersbeaten = JSON.parse(localStorage.getItem("trainersbeaten"));
-	if (typeof (trainersbeaten) !== "undefined" && trainersbeaten != null) {
-		console.log("SET TRAINERS BEATEN");
-		for (var i = 0; i < trainersbeaten.length; i++) {
-			trainers[i][5] = trainersbeaten[i];
-		}
-	}
-} else {
-	money = 0;
-
-	playerpoke = new Pokemon("pikachu", 5);
-
-	playerx = 7;
-	playery = 4;
-
-	checkpointx = 7;
-	checkpointy = 4;
-
-	playerdir = DOWN;
 }
 console.log(playerpoke);
 var keys = [
@@ -175,7 +164,7 @@ var setstate = function (name) {
 			money += moneywon;
 			if (currenttrainerbattleindex != null) {
 				console.log("TRAINER WIN");
-				trainers[currenttrainerbattleindex][5] = true;
+				currentmap.trainers[currenttrainerbattleindex][5] = true;
 			}
 
 			winlevel = null;
@@ -286,9 +275,12 @@ window.onload = function () {
 			localStorage.setItem("checkpointx", checkpointx.toString());
 			localStorage.setItem("checkpointy", checkpointy.toString());
 			localStorage.setItem("playerdir", playerdir.toString());
-			localStorage.setItem("trainersbeaten", JSON.stringify(trainers.map(function (arg) {
-				return arg[5];
+			localStorage.setItem("trainersbeaten", JSON.stringify(maps.map(function (arg1) {
+				return arg1.trainers.map(function (arg2) {
+					return arg2[5];
+				})
 			})));
+			localStorage.setItem("mapindex", currentmapindex.toString());
 		}
 
 		savecounter = savecountdown;
@@ -297,38 +289,26 @@ window.onload = function () {
 	var ctx = canvas.getContext("2d");
 	canvaswidth = parseInt(getStyle(canvas, "width"));
 	canvasheight = parseInt(getStyle(canvas, "height"));
-	var tileset = new Image();
-	tileset.src = "tiles.png";
+
 	shownTilesWidth = canvaswidth / tilesize;
 	shownTilesHeight = canvasheight / tilesize;
 	playerscreenx = canvaswidth / 2 - tilesize / 2;
 	playerscreeny = canvasheight / 2 - tilesize / 2;
 
+	var tileset = new Image();
+	tileset.src = "tiles.png";
 
-	// TREE:
-	//  /\
-	//  {}
-	//  []
-	//
-	// TWO TREE TRUNK TO TOP CONNECTOR
-	//  ()
-	var data = ["}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
-				")()()()()()()()()()()()()()(",
-				"}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
-				")()()()[][][][][][][]()()()(",
-			    "}{}{}{}...@......$...{}{}{}{",
-			    ")()()()....../\\......()()()(",
-			    "}{}{}{}.####.{}.####.{}{}{}{",
-			    ")()()().####.().####.()()()(",
-			    "}{}{}{}.####.{}.####.{}{}{}{",
-			    ")()()().####.[].####.()()()(",
-			    "}{}{}{}..............{}{}{}{",
-			    ")()()()/\\/\\/\\/\\/\\/\\/\\()()()(",
-				"}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
-				")()()()()()()()()()()()()()(",
-				"}{}{}{}{}{}{}{}{}{}{}{}{}{}{"];
+	var Teleporter = function (tilesetx, tilesety, telemap, telex, teley) {
+		this.tilesetx = tilesetx;
+		this.tilesety = tilesety;
+		this.telemap = telemap;
+		this.telex = telex;
+		this.teley = teley;
+		this.passable = true;
+		this.name = "teleporter";
+	}
 
-	var datamap = {
+	var basedatamap = {
 		".": new TileType("grass", 1, 0, true),
 		"#": new TileType("tallgrass", 2, 0, true),
 		"/": new TileType("treetopleft", 3, 0, false),
@@ -338,43 +318,101 @@ window.onload = function () {
 		"[": new TileType("treebottomleft", 3, 2, false),
 		"]": new TileType("treebottomright", 4, 2, false),
 		"(": new TileType("treebothleft", 5, 0, false),
-		")": new TileType("treebothright", 6, 0, false),
-		"@": new Sign("Welcome to Pokemon! We have signs!"),
-		"$": new Sign("Here is another sign! It is long!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+		")": new TileType("treebothright", 6, 0, false)
 	};
 
-	var map = new Map(tileset, data, datamap);
+	// TREE:
+	//  /\
+	//  {}
+	//  []
+	//
+	// TWO TREE TRUNK TO TOP CONNECTOR
+	//  ()
+	var routedata = ["}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
+					 ")()()()()()()()()()()()()()()(",
+					 "}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
+					 ")()()()[][][][][][][]()()()()(",
+					 "}{}{}{}...@......$...{}{}{}{}{",
+					 ")()()()....../\\......[]()()()(",
+					 "}{}{}{}.####.{}.####..*{}{}{}{",
+					 ")()()().####.().####..*()()()(",
+					 "}{}{}{}.####.{}.####..*{}{}{}{",
+					 ")()()().####.[].####./\\()()()(",
+					 "}{}{}{}..............{}{}{}{}{",
+					 ")()()()/\\/\\/\\/\\/\\/\\/\\()()()()(",
+					 "}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
+					 ")()()()()()()()()()()()()()()(",
+					 "}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{"];
+
+	var garySprite = new Image();
+	garySprite.src = "gary.png";
+	var route = new Map(tileset, routedata, mergeoptions(basedatamap, {
+		"@": new Sign("Welcome to Pokemon! We have signs!"),
+		"$": new Sign("Here is another sign! It is long!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"),
+		"*": new Teleporter(1, 0, 1, 8, 4)
+	}), [[garySprite, 11, 4, "Hello!", new Pokemon("eevee", 5), false]]);
+
+	var towndata = ["}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
+				")()()()()()()()()()()()()()()(",
+				"}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
+				")()()()[][][][][][][]()()()()(",
+			    "}{}{}{}*............{}{}{}{}{",
+			    ")()()()/\\/\\/\\/\\/\\/\\/\\()()()()(",
+				"}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
+				")()()()()()()()()()()()()()()(",
+				"}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{"];
+
+	var town = new Map(tileset, towndata, mergeoptions(basedatamap, {
+		"*": new Teleporter(1, 0, 0, 21, 7)
+	}), []);
+
+	var maps = [route, town];
+
+	var setmap = function (index) {
+		currentmapindex = index;
+		currentmap = maps[currentmapindex];
+	}
+
+	if (usingsave) {
+		var trainersbeaten = JSON.parse(localStorage.getItem("trainersbeaten"));
+		if (typeof (trainersbeaten) !== "undefined" && trainersbeaten != null) {
+			console.log("SET TRAINERS BEATEN");
+			for (var i = 0; i < maps.length; i++) {
+				for (var j = 0; j < maps[i].trainers.length; j++) {
+					maps[i].trainers[j][5] = trainersbeaten[i][j];
+				}
+			}
+		}
+
+		var storedmapindex = localStorage.getItem("mapindex");
+		if (typeof (storedmapindex) !== "undefined" && storedmapindex != null) {
+			currentmapindex = parseInt(storedmapindex);
+		}
+	}
+	
+	currentmap = maps[currentmapindex];
+
 
 	setstate("overworld");
 
-	var trainerat = function (x, y) {
-		for (var i = 0; i < trainers.length; i++) {
-			if (trainers[i][1] === Math.round(x) && trainers[i][2] === Math.round(y)) {
-				return {
-					index: i,
-					trainer: trainers[i]
-				};
-			}
-		}
-		return null;
-	}
+
 
 	var draw = function () {
 		if (state === "overworld") {
 			ctx.fillStyle = "#000000";
 			ctx.fillRect(0, 0, canvaswidth, canvasheight);
-			map.draw(ctx);
+			currentmap.draw(ctx);
 
-			for (var i = 0; i < trainers.length; i++) {
-				if (trainers[i][2] < playery) {
-					ctx.drawImage(trainers[i][0], Math.round((trainers[i][1] - playerx) * tilesize + playerscreenx), Math.round((trainers[i][2] - playery) * tilesize + playerscreeny) - 12);
+			for (var i = 0; i < currentmap.trainers.length; i++) {
+				if (currentmap.trainers[i][2] < playery) {
+					ctx.drawImage(currentmap.trainers[i][0], Math.round((currentmap.trainers[i][1] - playerx) * tilesize + playerscreenx), Math.round((currentmap.trainers[i][2] - playery) * tilesize + playerscreeny) - 12);
 				}
 			}
 			ctx.drawImage(playeranimimg[directiontable[playerdir] + playeranim[currentanimindex]], playerscreenx, playerscreeny - 6);
 
-			for (var i = 0; i < trainers.length; i++) {
-				if (trainers[i][2] >= playery) {
-					ctx.drawImage(trainers[i][0], Math.round((trainers[i][1] - playerx) * tilesize + playerscreenx), Math.round((trainers[i][2] - playery) * tilesize + playerscreeny) - 12);
+			for (var i = 0; i < currentmap.trainers.length; i++) {
+				if (currentmap.trainers[i][2] >= playery) {
+					ctx.drawImage(currentmap.trainers[i][0], Math.round((currentmap.trainers[i][1] - playerx) * tilesize + playerscreenx), Math.round((currentmap.trainers[i][2] - playery) * tilesize + playerscreeny) - 12);
 				}
 			}
 
@@ -401,19 +439,19 @@ window.onload = function () {
 
 	var moveplayer = function () {
 		if ((playerdir === UP && playery === 0) ||
-			(playerdir === DOWN && playery === map.data.length - 1) ||
+			(playerdir === DOWN && playery === currentmap.data.length - 1) ||
 			(playerdir === LEFT && playerx === 0) ||
-			(playerdir === RIGHT && playerx === map.data[0].length - 1))
+			(playerdir === RIGHT && playerx === currentmap.data[0].length - 1))
 			return;
-		if ((playerdir === DOWN && trainerat(playerx, Math.floor(playery) + 1)) ||
-			(playerdir === UP && trainerat(playerx, Math.ceil(playery) - 1)) ||
-			(playerdir === LEFT && trainerat(Math.ceil(playerx) - 1, playery)) ||
-			(playerdir === RIGHT && trainerat(Math.floor(playerx) + 1, playery)))
+		if ((playerdir === DOWN && currentmap.trainerat(playerx, Math.floor(playery) + 1)) ||
+			(playerdir === UP && currentmap.trainerat(playerx, Math.ceil(playery) - 1)) ||
+			(playerdir === LEFT && currentmap.trainerat(Math.ceil(playerx) - 1, playery)) ||
+			(playerdir === RIGHT && currentmap.trainerat(Math.floor(playerx) + 1, playery)))
 			return;
-		if (!((playerdir === DOWN && map.get(playerx, Math.floor(playery) + 1).passable) ||
-				(playerdir === UP && map.get(playerx, Math.ceil(playery) - 1).passable) ||
-				(playerdir === LEFT && map.get(Math.ceil(playerx) - 1, playery).passable) ||
-				(playerdir === RIGHT && map.get(Math.floor(playerx) + 1, playery).passable)))
+		if (!((playerdir === DOWN && currentmap.get(playerx, Math.floor(playery) + 1).passable) ||
+				(playerdir === UP && currentmap.get(playerx, Math.ceil(playery) - 1).passable) ||
+				(playerdir === LEFT && currentmap.get(Math.ceil(playerx) - 1, playery).passable) ||
+				(playerdir === RIGHT && currentmap.get(Math.floor(playerx) + 1, playery).passable)))
 			return;
 		if (playermoving) {
 			if (playerdir === UP) {
@@ -435,11 +473,11 @@ window.onload = function () {
 			if (playery < 0) {
 				playery = 0;
 			}
-			if (playerx > map.data[0].length - 1) {
-				playerx = map.data[0].length - 1;
+			if (playerx > currentmap.data[0].length - 1) {
+				playerx = currentmap.data[0].length - 1;
 			}
-			if (playery > map.data.length - 1) {
-				playery = map.data.length - 1;
+			if (playery > currentmap.data.length - 1) {
+				playery = currentmap.data.length - 1;
 			}
 		}
 	}
@@ -450,7 +488,7 @@ window.onload = function () {
 
 	var directionplayer = function (dir) {
 		if (onblock()) {
-			if (map.get(playerx, playery).name === "tallgrass" && Math.floor(Math.random() * 7) === 0) {
+			if (currentmap.get(playerx, playery).name === "tallgrass" && Math.floor(Math.random() * 7) === 0) {
 				var encounter = grasspokes[Math.floor(Math.random(grasspokes.length))];
 				currentbattle = new Battle(playerpoke, encounter, true);
 				setstate("battle");
@@ -462,9 +500,7 @@ window.onload = function () {
 
 	tileset.onload = function () {
 		setInterval(function () {
-			if (textbeingshown) {
-				console.log(textbeingshown);
-			}
+			console.log("TICK");
 			draw();
 
 			if (state === "overworld") {
@@ -514,11 +550,17 @@ window.onload = function () {
 
 					if (onblock()) {
 						currentanimindex = 0;
-					}
+						if (playerstopping) {
+							playerstopping = false;
+							playermoving = false;
+						}
 
-					if (onblock() && playerstopping) {
-						playerstopping = false;
-						playermoving = false;
+						if (currentmap.get(playerx, playery).name === "teleporter") {
+							var tele = currentmap.get(playerx, playery);
+							setmap(tele.telemap);
+							playerx = tele.telex;
+							playery = tele.teley;
+						}
 					}
 				} else {
 					if (keys[ACTION] && !pressingaction) {
@@ -531,14 +573,14 @@ window.onload = function () {
 					}
 				}
 
-				if (playerdir === UP && keys[ACTION] && onblock() && map.get(playerx, playery - 1).name === "sign" && !pressingaction) {
+				if (playerdir === UP && keys[ACTION] && onblock() && currentmap.get(playerx, playery - 1).name === "sign" && !pressingaction) {
 					pressingaction = true;
-					textbeingshown = map.get(playerx, playery - 1).text;
+					textbeingshown = currentmap.get(playerx, playery - 1).text;
 				}
 				if (!pressingaction && keys[ACTION] && onblock()) {
-					if (playerdir === UP && trainerat(playerx, playery - 1)) {
+					if (playerdir === UP && currentmap.trainerat(playerx, playery - 1)) {
 						pressingaction = true;
-						var trainer = trainerat(playerx, playery - 1);
+						var trainer = currentmap.trainerat(playerx, playery - 1);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
 							var opposing = Object.create(trainer.trainer[4]);
@@ -548,9 +590,9 @@ window.onload = function () {
 						}
 
 					}
-					if (playerdir === DOWN && trainerat(playerx, playery + 1)) {
+					if (playerdir === DOWN && currentmap.trainerat(playerx, playery + 1)) {
 						pressingaction = true;
-						var trainer = trainerat(playerx, playery + 1);
+						var trainer = currentmap.trainerat(playerx, playery + 1);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
 							var opposing = Object.create(trainer.trainer[4]);
@@ -559,9 +601,9 @@ window.onload = function () {
 							currenttrainerbattleindex = trainer.index;
 						}
 					}
-					if (playerdir === LEFT && trainerat(playerx - 1, playery)) {
+					if (playerdir === LEFT && currentmap.trainerat(playerx - 1, playery)) {
 						pressingaction = true;
-						var trainer = trainerat(playerx - 1, playery);
+						var trainer = currentmap.trainerat(playerx - 1, playery);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
 							var opposing = Object.create(trainer.trainer[4]);
@@ -570,9 +612,9 @@ window.onload = function () {
 							currenttrainerbattleindex = trainer.index;
 						}
 					}
-					if (playerdir === RIGHT && trainerat(playerx + 1, playery)) {
+					if (playerdir === RIGHT && currentmap.trainerat(playerx + 1, playery)) {
 						pressingaction = true;
-						var trainer = trainerat(playerx + 1, playery);
+						var trainer = currentmap.trainerat(playerx + 1, playery);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
 							var opposing = Object.create(trainer.trainer[4]);
