@@ -28,6 +28,8 @@
 			<br />2 = Move 2
 			<br />3 = Move 3
 		</span>
+		<br />
+		<button onclick="if(confirm('Are you sure that you want to reset your game?')) { localStorage.setItem('resettinggame', 'true'); alert('Your game will be reset, just refresh the page.'); }">Reset Game</button>
 
 		<script src="lib.js"></script>
 		<script src="tiletype.js"></script>

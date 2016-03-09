@@ -1,6 +1,5 @@
 var usingsave = (typeof (Storage) !== "undefined") && localStorage.getItem("playerpokename");
 
-
 var overworldmusic = new Audio("route-1.mp3");
 overworldmusic.play();
 overworldmusic.addEventListener("ended", function (e) {
@@ -37,29 +36,39 @@ var money = 0;
 
 var playerpoke = new Pokemon("pikachu", 5);
 
-var playerx = 7;
-var playery = 4;
+var playerx = 14;
+var playery = 9;
 
-var checkpointx = 7;
-var checkpointy = 4;
+var checkpointx = 14;
+var checkpointy = 9;
 
 var playerdir = DOWN;
+
+var resettinggame = "false";
 if (usingsave) {
-	console.log("USING SAVE");
-	money = parseInt(localStorage.getItem("money"));
+	storedresettinggame = localStorage.getItem("resettinggame");
+	if (typeof (storedresettinggame) !== "undefined" && storedresettinggame != null) {
+		console.log("SET", storedresettinggame);
+		resettinggame = storedresettinggame;
+	}
+	if (resettinggame === "false") {
+		console.log("USING SAVE");
+		money = parseInt(localStorage.getItem("money"));
 
-	playerpoke = new Pokemon(localStorage.getItem("playerpokename"), parseInt(localStorage.getItem("playerpokelevel")), parseInt(localStorage.getItem("playerpokeexp")));
+		playerpoke = new Pokemon(localStorage.getItem("playerpokename"), parseInt(localStorage.getItem("playerpokelevel")), parseInt(localStorage.getItem("playerpokeexp")));
 
-	playerx = parseInt(localStorage.getItem("playerx"));
-	playery = parseInt(localStorage.getItem("playery"));
+		playerx = parseInt(localStorage.getItem("playerx"));
+		playery = parseInt(localStorage.getItem("playery"));
 
-	checkpointx = parseInt(localStorage.getItem("checkpointx"));
-	checkpointy = parseInt(localStorage.getItem("checkpointy"));
+		checkpointx = parseInt(localStorage.getItem("checkpointx"));
+		checkpointy = parseInt(localStorage.getItem("checkpointy"));
 
-	var storeddir = localStorage.getItem("playerdir");
-	if (typeof (storeddir) !== "undefined" && storeddir != null) {
-		playerdir = parseInt(localStorage.getItem("playerdir"));
-		console.log(playerdir);
+		var storeddir = localStorage.getItem("playerdir");
+		if (typeof (storeddir) !== "undefined" && storeddir != null) {
+			playerdir = parseInt(localStorage.getItem("playerdir"));
+		}
+	} else {
+		localStorage.setItem("resettinggame", "false");
 	}
 }
 console.log(playerpoke);
@@ -74,7 +83,7 @@ var keys = [
 	false
 ];
 var savecounter = 0;
-var savecountdown = 600;
+var savecountdown = 300;
 var pickingmove = false;
 // [sprite, x, y, text, poke, beaten]
 var battlingaftertrainertext = false;
@@ -328,28 +337,57 @@ window.onload = function () {
 	//
 	// TWO TREE TRUNK TO TOP CONNECTOR
 	//  ()
-	var routedata = ["}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
-					 ")()()()()()()()()()()()()()()(",
-					 "}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
-					 ")()()()[][][][][][][]()()()()(",
-					 "}{}{}{}...@......$...{}{}{}{}{",
-					 ")()()()....../\\......[]()()()(",
-					 "}{}{}{}.####.{}.####..*{}{}{}{",
-					 ")()()().####.().####..*()()()(",
-					 "}{}{}{}.####.{}.####..*{}{}{}{",
-					 ")()()().####.[].####./\\()()()(",
-					 "}{}{}{}..............{}{}{}{}{",
-					 ")()()()/\\/\\/\\/\\/\\/\\/\\()()()()(",
-					 "}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
-					 ")()()()()()()()()()()()()()()(",
-					 "}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{"];
+	var routedata = ["}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
+					 ")()()()()()()()()()()()()()()()(",
+					 "}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
+					 ")()()()[][][][][][][][]()()()()(",
+					 "}{}{}{}...@.abcde..$...{}{}{}{}{}{",
+					 ")()()().....fghij......()()()()()(",
+					 "}{}{}{}.....klmno......{}{}{}{}{}{",
+					 ")()()().....pqrst......()()()()()(",
+					 "}{}{}{}.....uvwxy......{}{}{}{}{}{",
+					 ")()()()................[]()()()()(",
+					 "}{}{}{}.####.....####...*{}{}{}{}{",
+					 ")()()().####.....####...*()()()()(",
+					 "}{}{}{}.####.....####...*{}{}{}{}{",
+					 ")()()().####.....####../\\()()()(",
+					 "}{}{}{}................{}{}{}{}{",
+					 ")()()()/\\/\\/\\/\\/\\/\\/\\/\\()()()()(",
+					 "}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
+					 ")()()()()()()()()()()()()()()()(",
+					 "}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{"];
 
 	var garySprite = new Image();
 	garySprite.src = "gary.png";
 	var route = new Map(tileset, routedata, mergeoptions(basedatamap, {
 		"@": new Sign("Welcome to Pokemon! We have signs!"),
 		"$": new Sign("Here is another sign! It is long!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"),
-		"*": new Teleporter(1, 0, 1, 8, 4)
+		"*": new Teleporter(1, 0, 1, 8, 4),
+		"a": new TileType("a", 0, 3, false),
+		"b": new TileType("b", 1, 3, false),
+		"c": new TileType("c", 2, 3, false),
+		"d": new TileType("d", 3, 3, false),
+		"e": new TileType("e", 4, 3, false),
+		"f": new TileType("f", 0, 4, false),
+		"g": new TileType("g", 1, 4, false),
+		"h": new TileType("h", 2, 4, false),
+		"i": new TileType("i", 3, 4, false),
+		"j": new TileType("j", 4, 4, false),
+		"k": new TileType("k", 0, 5, false),
+		"l": new TileType("l", 1, 5, false),
+		"m": new TileType("m", 2, 5, false),
+		"n": new TileType("n", 3, 5, false),
+		"o": new TileType("o", 4, 5, false),
+		"p": new TileType("p", 0, 6, false),
+		"q": new TileType("q", 1, 6, false),
+		"r": new TileType("r", 2, 6, false),
+		"s": new TileType("s", 3, 6, false),
+		"t": new TileType("t", 4, 6, false),
+		"u": new TileType("u", 0, 7, false),
+		"v": new TileType("v", 1, 7, false),
+		"w": new TileType("w", 2, 7, true),
+		"x": new TileType("x", 3, 7, false),
+		"y": new TileType("y", 4, 7, false),
 	}), [[garySprite, 11, 4, "Hello!", new Pokemon("eevee", 5), false]]);
 
 	var towndata = ["}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
@@ -363,7 +401,7 @@ window.onload = function () {
 				"}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{"];
 
 	var town = new Map(tileset, towndata, mergeoptions(basedatamap, {
-		"*": new Teleporter(1, 0, 0, 21, 7)
+		"*": new Teleporter(1, 0, 0, 23, 11)
 	}), []);
 
 	var maps = [route, town];
@@ -389,7 +427,7 @@ window.onload = function () {
 			currentmapindex = parseInt(storedmapindex);
 		}
 	}
-	
+
 	currentmap = maps[currentmapindex];
 
 
