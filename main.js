@@ -52,7 +52,6 @@ if (usingsave) {
 		resettinggame = storedresettinggame;
 	}
 	if (resettinggame === "false") {
-		usingsave = false;
 		console.log("USING SAVE");
 		money = parseInt(localStorage.getItem("money"));
 
@@ -69,6 +68,7 @@ if (usingsave) {
 			playerdir = parseInt(localStorage.getItem("playerdir"));
 		}
 	} else {
+		usingsave = false;
 		localStorage.setItem("resettinggame", "false");
 	}
 }
@@ -385,7 +385,7 @@ window.onload = function () {
 		"t": new TileType("t", 4, 6, false),
 		"u": new TileType("u", 0, 7, false),
 		"v": new TileType("v", 1, 7, false),
-		"w": new TileType("w", 2, 7, true),
+		"w": new Teleporter(2, 7, 2, 7, 7),
 		"x": new TileType("x", 3, 7, false),
 		"y": new TileType("y", 4, 7, false),
 	}), [[garySprite, 11, 4, "Hello!", new Pokemon("eevee", 5), false]]);
@@ -403,8 +403,22 @@ window.onload = function () {
 	var town = new Map(tileset, towndata, mergeoptions(basedatamap, {
 		"*": new Teleporter(1, 0, 0, 23, 11)
 	}), []);
+	
+	var pokecenterdata = ["###############",
+						  "###############",
+						  "#...#######...#",
+						  "....#######....",
+						  "...............",
+						  "##.............",
+						  "##.........##..",
+						  "...........##..",
+						  "#.............#"]
+	var pokecenter = new Map(new Image(), pokecenterdata, {
+		".": new PassingDataTile(true),
+		"#": new PassingDataTile(false)
+	}, [], "pokecenter.png");
 
-	var maps = [route, town];
+	var maps = [route, town, pokecenter];
 
 	var setmap = function (index) {
 		currentmapindex = index;

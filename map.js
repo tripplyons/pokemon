@@ -1,12 +1,17 @@
 // datamap is a hashmap of characters on a map to TileTypes
-var Map = function (tileset, data, datamap, trainers) {
+var Map = function (tileset, data, datamap, trainers, bgsrc) {
 	this.tileset = tileset;
 	this.data = data;
 	this.datamap = datamap;
 	this.trainers = trainers || [];
+	this.bg = new Image();
+	if (bgsrc) {
+		this.bg.src = bgsrc;
+	}
 }
 
 Map.prototype.draw = function (ctx) {
+	ctx.drawImage(this.bg, -playerx * tilesize + playerscreenx, -playery * tilesize + playerscreeny);
 	var starttilex = Math.floor(playerx) - Math.floor(shownTilesWidth / 2) - 1;
 	var starttiley = Math.floor(playery) - Math.floor(shownTilesHeight / 2) - 1;
 	if (starttilex < 0) {
@@ -17,7 +22,9 @@ Map.prototype.draw = function (ctx) {
 	}
 	for (var row = starttiley; row < starttiley + shownTilesHeight + 2 && row < this.data.length; row++) {
 		for (var col = starttilex; col < starttilex + shownTilesWidth + 2 && col < this.data[0].length; col++) {
-			ctx.drawImage(this.tileset, this.datamap[this.data[row][col]].tilesetx * tilesize, this.datamap[this.data[row][col]].tilesety * tilesize, tilesize, tilesize, Math.round((col - playerx) * tilesize + playerscreenx), Math.round((row - playery) * tilesize + playerscreeny), tilesize, tilesize);
+			if (!this.data[row][col].passingdatatile) {
+				ctx.drawImage(this.tileset, this.datamap[this.data[row][col]].tilesetx * tilesize, this.datamap[this.data[row][col]].tilesety * tilesize, tilesize, tilesize, Math.round((col - playerx) * tilesize + playerscreenx), Math.round((row - playery) * tilesize + playerscreeny), tilesize, tilesize);
+			}
 
 		}
 	}

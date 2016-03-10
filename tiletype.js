@@ -12,3 +12,9 @@ var Sign = function (text) {
 	this.tilesety = 1;
 	this.passable = false;
 }
+
+var PassingDataTile = function(passable) {
+	this.passable = passable;
+	this.name = "";
+	this.passingdatatile = true;
+}
