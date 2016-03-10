@@ -52,6 +52,7 @@ if (usingsave) {
 		resettinggame = storedresettinggame;
 	}
 	if (resettinggame === "false") {
+		usingsave = false;
 		console.log("USING SAVE");
 		money = parseInt(localStorage.getItem("money"));
 
@@ -88,7 +89,6 @@ var pickingmove = false;
 // [sprite, x, y, text, poke, beaten]
 var battlingaftertrainertext = false;
 var currenttrainerbattleindex = null;
-var oldkeys = keys;
 var canvaswidth;
 var canvasheight;
 var shownTilesWidth;
@@ -413,6 +413,7 @@ window.onload = function () {
 
 	if (usingsave) {
 		var trainersbeaten = JSON.parse(localStorage.getItem("trainersbeaten"));
+		console.log(trainersbeaten);
 		if (typeof (trainersbeaten) !== "undefined" && trainersbeaten != null) {
 			console.log("SET TRAINERS BEATEN");
 			for (var i = 0; i < maps.length; i++) {
@@ -538,7 +539,7 @@ window.onload = function () {
 
 	tileset.onload = function () {
 		setInterval(function () {
-			console.log("TICK");
+//			console.log("TICK");
 			draw();
 
 			if (state === "overworld") {
