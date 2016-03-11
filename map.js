@@ -1,9 +1,10 @@
 // datamap is a hashmap of characters on a map to TileTypes
-var Map = function (tileset, data, datamap, trainers, bgsrc) {
+var Map = function (tileset, data, datamap, trainers, events, bgsrc) {
 	this.tileset = tileset;
 	this.data = data;
 	this.datamap = datamap;
 	this.trainers = trainers || [];
+	this.events = events;
 	this.bg = new Image();
 	if (bgsrc) {
 		this.bg.src = bgsrc;

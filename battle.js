@@ -30,8 +30,8 @@ Battle.prototype.draw = function (ctx) {
 };
 
 Battle.prototype.update = function () {
-	if (keys[ACTION] && !pressingaction) {
-		pressingaction = true;
+	if (justpressedaction) {
+		justpressedaction = false;
 		if (!pickingmove) {
 			textbeingshown = null;
 			pickingmove = true;
@@ -47,16 +47,13 @@ Battle.prototype.update = function () {
 		}
 	}
 	if (pickingmove) {
-		if (keys[ONE] && !pressingone) {
-			pressingone = true;
+		if (justpressedone) {
 			this.doTurn(0);
 		}
-		if (this.playerpoke.moves.length > 1 && keys[TWO] && !pressingtwo) {
-			pressingtwo = true;
+		if (this.playerpoke.moves.length > 1 && justpressedtwo) {
 			this.doTurn(1);
 		}
-		if (this.playerpoke.moves.length > 2 && keys[THREE] && !pressingthree) {
-			pressingthree = true;
+		if (this.playerpoke.moves.length > 2 && justpressedthree) {
 			this.doTurn(2);
 		}
 	}

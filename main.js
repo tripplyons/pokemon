@@ -110,10 +110,6 @@ var dt = Math.round(1000 / fps);
 var dts = dt / 1000;
 var playermoving = false;
 var playeranim = ["1", "2", "1", "3"];
-var pressingaction = false;
-var pressingone = false;
-var pressingtwo = false;
-var pressingthree = false;
 var amountperanimframe = 4;
 var newarr = [];
 for (var i = 0; i < playeranim.length; i++) {
@@ -192,7 +188,6 @@ var setstate = function (name) {
 	if (name === "battle") {
 		overworldmusic.pause();
 		battlemusic.play();
-		pressingaction = keys[ACTION];
 		textbeingshown = "A battle has started!";
 		pickingmove = false;
 		state = "battle";
@@ -204,6 +199,11 @@ var setstate = function (name) {
 		state = "overworld";
 	}
 }
+
+var justpressedaction = false;
+var justpressedone = false;
+var justpressedtwo = false;
+var justpressedthree = false;
 
 document.addEventListener("keydown", function (e) {
 	e = e || window.event;
@@ -220,15 +220,31 @@ document.addEventListener("keydown", function (e) {
 		keys[RIGHT] = true;
 	}
 	if (e.keyCode === 32) {
+		if (!keys[ACTION]) {
+			justpressedaction = true;
+		}
+
 		keys[ACTION] = true;
 	}
 	if (e.keyCode === 49) {
+		if (!keys[ONE]) {
+			justpressedone = true;
+		}
+
 		keys[ONE] = true;
 	}
 	if (e.keyCode === 50) {
+		if (!keys[TWO]) {
+			justpressedtwo = true;
+		}
+
 		keys[TWO] = true;
 	}
 	if (e.keyCode === 51) {
+		if (!keys[THREE]) {
+			justpressedthree = true;
+		}
+
 		keys[THREE] = true;
 	}
 });
@@ -248,19 +264,15 @@ document.addEventListener("keyup", function (e) {
 	}
 	if (e.keyCode === 32) {
 		keys[ACTION] = false;
-		pressingaction = false;
 	}
 	if (e.keyCode === 49) {
 		keys[ONE] = false;
-		pressingone = false;
 	}
 	if (e.keyCode === 50) {
 		keys[TWO] = false;
-		pressingtwo = false;
 	}
 	if (e.keyCode === 51) {
 		keys[THREE] = false;
-		pressingthree = false;
 	}
 });
 
@@ -417,7 +429,7 @@ window.onload = function () {
 		".": new PassingDataTile(true),
 		"#": new PassingDataTile(false),
 		"*": new Teleporter(0, 0, 0, 14, 9)
-	}, [], "pokecenter.png");
+	}, [], [new ActionEvent()], "pokecenter.png");
 
 	var maps = [route, town, pokecenter];
 
@@ -554,6 +566,10 @@ window.onload = function () {
 
 	tileset.onload = function () {
 		setInterval(function () {
+			if (justpressedaction) {
+				console.log("ACTION");
+			}
+
 			//			console.log("TICK");
 			draw();
 
@@ -617,8 +633,8 @@ window.onload = function () {
 						}
 					}
 				} else {
-					if (keys[ACTION] && !pressingaction) {
-						pressingaction = true;
+					if (justpressedaction) {
+						justpressedaction = false;
 						textbeingshown = null;
 						if (battlingaftertrainertext) {
 							battlingaftertrainertext = false;
@@ -627,13 +643,13 @@ window.onload = function () {
 					}
 				}
 
-				if (playerdir === UP && keys[ACTION] && onblock() && currentmap.get(playerx, playery - 1).name === "sign" && !pressingaction) {
-					pressingaction = true;
+				if (playerdir === UP && justpressedaction && onblock() && currentmap.get(playerx, playery - 1).name === "sign") {
+					justpressedaction = false;
 					textbeingshown = currentmap.get(playerx, playery - 1).text;
 				}
-				if (!pressingaction && keys[ACTION] && onblock()) {
+				if (justpressedaction && onblock()) {
+					justpressedaction = false;
 					if (playerdir === UP && currentmap.trainerat(playerx, playery - 1)) {
-						pressingaction = true;
 						var trainer = currentmap.trainerat(playerx, playery - 1);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
@@ -645,7 +661,6 @@ window.onload = function () {
 
 					}
 					if (playerdir === DOWN && currentmap.trainerat(playerx, playery + 1)) {
-						pressingaction = true;
 						var trainer = currentmap.trainerat(playerx, playery + 1);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
@@ -656,7 +671,6 @@ window.onload = function () {
 						}
 					}
 					if (playerdir === LEFT && currentmap.trainerat(playerx - 1, playery)) {
-						pressingaction = true;
 						var trainer = currentmap.trainerat(playerx - 1, playery);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
@@ -667,7 +681,6 @@ window.onload = function () {
 						}
 					}
 					if (playerdir === RIGHT && currentmap.trainerat(playerx + 1, playery)) {
-						pressingaction = true;
 						var trainer = currentmap.trainerat(playerx + 1, playery);
 						textbeingshown = trainer.trainer[3];
 						if (!trainer.trainer[5]) {
