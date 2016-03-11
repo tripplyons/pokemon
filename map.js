@@ -4,7 +4,7 @@ var Map = function (tileset, data, datamap, trainers, events, bgsrc) {
 	this.data = data;
 	this.datamap = datamap;
 	this.trainers = trainers || [];
-	this.events = events;
+	this.events = events || [];
 	this.bg = new Image();
 	if (bgsrc) {
 		this.bg.src = bgsrc;
@@ -42,6 +42,15 @@ Map.prototype.trainerat = function (x, y) {
 				index: i,
 				trainer: this.trainers[i]
 			};
+		}
+	}
+	return null;
+}
+
+Map.prototype.eventat = function (x, y) {
+	for (var i = 0; i < this.events.length; i++) {
+		if (this.events[i].x === Math.round(x) && this.events[i].y === Math.round(y)) {
+			return this.events[i];
 		}
 	}
 	return null;

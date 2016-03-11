@@ -429,7 +429,9 @@ window.onload = function () {
 		".": new PassingDataTile(true),
 		"#": new PassingDataTile(false),
 		"*": new Teleporter(0, 0, 0, 14, 9)
-	}, [], [new ActionEvent()], "pokecenter.png");
+	}, [], [new ActionEvent(7, 3, function() {
+		playerpoke.hp = playerpoke.stats.hp;
+	})], "pokecenter.png");
 
 	var maps = [route, town, pokecenter];
 
@@ -689,6 +691,26 @@ window.onload = function () {
 							battlingaftertrainertext = true;
 							currenttrainerbattleindex = trainer.index;
 						}
+					}
+					
+					var eventloc = null;
+					if(playerdir === UP) {
+						eventloc = {x: playerx, y: playery - 1};
+					}
+					if(playerdir === DOWN) {
+						eventloc = {x: playerx, y: playery + 1};
+					}
+					if(playerdir === LEFT) {
+						eventloc = {x: playerx - 1, y: playery};
+					}
+					if(playerdir === RIGHT) {
+						eventloc = {x: playerx + 1, y: playery};
+					}
+					
+					console.log(eventloc);
+					var event = currentmap.eventat(eventloc.x, eventloc.y);
+					if(event) {
+						event.action();
 					}
 				}
 
