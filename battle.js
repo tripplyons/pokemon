@@ -48,12 +48,15 @@ Battle.prototype.update = function () {
 	}
 	if (pickingmove) {
 		if (justpressedone) {
+			justpressedone = false;
 			this.doTurn(0);
 		}
 		if (this.playerpoke.moves.length > 1 && justpressedtwo) {
+			justpressedtwo = false;
 			this.doTurn(1);
 		}
 		if (this.playerpoke.moves.length > 2 && justpressedthree) {
+			justpressedthree = false;
 			this.doTurn(2);
 		}
 	}
@@ -61,6 +64,7 @@ Battle.prototype.update = function () {
 
 Battle.prototype.doTurn = function (moveNo) {
 	if (this.playerpoke.stats["spe"] >= this.opposing.stats["spe"]) {
+		console.log("PLAYER FIRST");
 		this.opposing.takeDamage(this.playerpoke, this.playerpoke.moves[moveNo]);
 		if (this.opposing.hp !== 0) {
 			this.playerpoke.takeDamage(this.opposing, this.opposing.moves[Math.floor(Math.random() * this.opposing.moves.length)]);
@@ -72,6 +76,7 @@ Battle.prototype.doTurn = function (moveNo) {
 			setstate("overworld");
 		}
 	} else {
+		console.log("PLAYER SECOND");
 		this.playerpoke.takeDamage(this.opposing, this.opposing.moves[Math.floor(Math.random() * this.opposing.moves.length)]);
 		if (this.playerpoke.hp !== 0) {
 			this.opposing.takeDamage(this.playerpoke, this.playerpoke.moves[moveNo]);

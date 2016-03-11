@@ -67,6 +67,11 @@ if (usingsave) {
 		if (typeof (storeddir) !== "undefined" && storeddir != null) {
 			playerdir = parseInt(localStorage.getItem("playerdir"));
 		}
+		
+		var storedhp = localStorage.getItem("playerpokehp");
+		if(typeof (storedhp) !== "undefined" && storedhp != null) {
+			this.playerpoke.hp = storedhp;
+		}
 	} else {
 		usingsave = false;
 		localStorage.setItem("resettinggame", "false");
@@ -290,6 +295,7 @@ window.onload = function () {
 			localStorage.setItem("playerpokename", playerpoke.name);
 			localStorage.setItem("playerpokelevel", playerpoke.level.toString());
 			localStorage.setItem("playerpokeexp", playerpoke.exp.toString());
+			localStorage.setItem("playerpokehp", playerpoke.hp.toString());
 			localStorage.setItem("playerx", playerx.toString());
 			localStorage.setItem("playery", playery.toString());
 			localStorage.setItem("money", money.toString());
