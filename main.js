@@ -403,7 +403,7 @@ window.onload = function () {
 	var town = new Map(tileset, towndata, mergeoptions(basedatamap, {
 		"*": new Teleporter(1, 0, 0, 23, 11)
 	}), []);
-	
+
 	var pokecenterdata = ["###############",
 						  "###############",
 						  "#...#######...#",
@@ -412,10 +412,11 @@ window.onload = function () {
 						  "##.............",
 						  "##.........##..",
 						  "...........##..",
-						  "#.............#"]
+						  "#......*......#"]
 	var pokecenter = new Map(new Image(), pokecenterdata, {
 		".": new PassingDataTile(true),
-		"#": new PassingDataTile(false)
+		"#": new PassingDataTile(false),
+		"*": new Teleporter(0, 0, 0, 14, 9)
 	}, [], "pokecenter.png");
 
 	var maps = [route, town, pokecenter];
@@ -553,7 +554,7 @@ window.onload = function () {
 
 	tileset.onload = function () {
 		setInterval(function () {
-//			console.log("TICK");
+			//			console.log("TICK");
 			draw();
 
 			if (state === "overworld") {
