@@ -20,6 +20,9 @@ var ACTION = 4;
 var ONE = 5;
 var TWO = 6;
 var THREE = 7;
+var P = 8;
+
+var caught = false;
 
 var winlevel = null;
 var currentbattle = null;
@@ -44,6 +47,8 @@ var checkpointy = 9;
 
 var playerdir = DOWN;
 
+var pc = [];
+
 var resettinggame = "false";
 if (usingsave) {
 	storedresettinggame = localStorage.getItem("resettinggame");
@@ -67,10 +72,21 @@ if (usingsave) {
 		if (typeof (storeddir) !== "undefined" && storeddir != null) {
 			playerdir = parseInt(localStorage.getItem("playerdir"));
 		}
-		
+
 		var storedhp = localStorage.getItem("playerpokehp");
-		if(typeof (storedhp) !== "undefined" && storedhp != null) {
+		if (typeof (storedhp) !== "undefined" && storedhp != null) {
 			this.playerpoke.hp = storedhp;
+		}
+
+		var storedpc = localStorage.getItem("pc");
+		if (typeof (storedpc) !== "undefined" && storedpc != null) {
+			storedpc = JSON.parse(storedpc);
+			var i = 0;
+			while (i < storedpc.length) {
+				pc.push(new Pokemon(storedpc[i].name, storedpc[i].level, storedpc[i].exp));
+				i++;
+			}
+			console.log(pc);
 		}
 	} else {
 		usingsave = false;
@@ -79,6 +95,7 @@ if (usingsave) {
 }
 console.log(playerpoke);
 var keys = [
+	false,
 	false,
 	false,
 	false,
@@ -103,7 +120,10 @@ var waitingforonblocksave = false;
 var grasspokes = [
 	new Pokemon("rattata", 3),
 	new Pokemon("rattata", 4),
-	new Pokemon("rattata", 5)
+	new Pokemon("rattata", 5),
+	new Pokemon("pidgey", 3),
+	new Pokemon("pidgey", 4),
+	new Pokemon("pidgey", 5)
 ];
 //console.log(playerpoke);
 var playerscreenx;
@@ -179,12 +199,18 @@ var setstate = function (name) {
 
 			winlevel = null;
 		} else {
-			money = Math.round(money / 2);
-			playerx = checkpointx;
-			playery = checkpointy;
-			playerdir = DOWN;
-			playerpoke.hp = playerpoke.stats["hp"];
-			textbeingshown = "You lost. Returned to checkpoint.";
+			if (caught) {
+				caught = false;
+				
+				textbeingshown = "Caught the wild pokemon.";
+			} else {
+				money = Math.round(money / 2);
+				playerx = checkpointx;
+				playery = checkpointy;
+				playerdir = DOWN;
+				playerpoke.hp = playerpoke.stats["hp"];
+				textbeingshown = "You lost. Returned to checkpoint.";
+			}
 		}
 		if (typeof (currenttrainerbattleindex) !== "undefined") {
 			currenttrainerbattleindex = null;
@@ -209,6 +235,7 @@ var justpressedaction = false;
 var justpressedone = false;
 var justpressedtwo = false;
 var justpressedthree = false;
+var justpressedp = false;
 
 document.addEventListener("keydown", function (e) {
 	e = e || window.event;
@@ -252,6 +279,13 @@ document.addEventListener("keydown", function (e) {
 
 		keys[THREE] = true;
 	}
+	if (e.keyCode === 80) {
+		if (!keys[P]) {
+			justpressedp = true;
+		}
+
+		keys[P] = true;
+	}
 });
 document.addEventListener("keyup", function (e) {
 	e = e || window.event;
@@ -272,12 +306,19 @@ document.addEventListener("keyup", function (e) {
 	}
 	if (e.keyCode === 49) {
 		keys[ONE] = false;
+		justpressedone = false;
 	}
 	if (e.keyCode === 50) {
 		keys[TWO] = false;
+		justpressedtwo = false;
 	}
 	if (e.keyCode === 51) {
 		keys[THREE] = false;
+		justpressedthree = false;
+	}
+	if (e.keyCode === 80) {
+		keys[P] = false;
+		justpressedp = false;
 	}
 });
 
@@ -308,6 +349,13 @@ window.onload = function () {
 				})
 			})));
 			localStorage.setItem("mapindex", currentmapindex.toString());
+			localStorage.setItem("pc", JSON.stringify(pc.map(function (arg) {
+				return {
+					name: arg.name,
+					level: arg.level,
+					exp: arg.exp
+				};
+			})));
 		}
 
 		savecounter = savecountdown;
@@ -353,18 +401,18 @@ window.onload = function () {
 	//  {}
 	//  []
 	//
-	// TWO TREE TRUNK TO TOP CONNECTOR
+	// TWO TREE TOP TO TRUNK CONNECTOR
 	//  ()
 	var routedata = ["}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
 					 ")()()()()()()()()()()()()()()()(",
 					 "}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
 					 ")()()()[][][][][][][][]()()()()(",
-					 "}{}{}{}...@.abcde..$...{}{}{}{}{}{",
+					 "}{}{}{}.....abcde......{}{}{}{}{}{",
 					 ")()()().....fghij......()()()()()(",
 					 "}{}{}{}.....klmno......{}{}{}{}{}{",
 					 ")()()().....pqrst......()()()()()(",
 					 "}{}{}{}.....uvwxy......{}{}{}{}{}{",
-					 ")()()()................[]()()()()(",
+					 ")()()()........@.......[]()()()()(",
 					 "}{}{}{}.####.....####...*{}{}{}{}{",
 					 ")()()().####.....####...*()()()()(",
 					 "}{}{}{}.####.....####...*{}{}{}{}{",
@@ -379,7 +427,7 @@ window.onload = function () {
 	garySprite.src = "gary.png";
 	var route = new Map(tileset, routedata, mergeoptions(basedatamap, {
 		"@": new Sign("Welcome to Pokemon! We have signs!"),
-		"$": new Sign("Here is another sign! It is long!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"),
+		//		"$": new Sign("Here is another sign! It is long!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"),
 		"*": new Teleporter(1, 0, 1, 8, 4),
 		"a": new TileType("a", 0, 3, false),
 		"b": new TileType("b", 1, 3, false),
@@ -406,7 +454,7 @@ window.onload = function () {
 		"w": new Teleporter(2, 7, 2, 7, 7),
 		"x": new TileType("x", 3, 7, false),
 		"y": new TileType("y", 4, 7, false),
-	}), [[garySprite, 11, 4, "Hello!", new Pokemon("eevee", 5), false]]);
+	}), [[garySprite, 11, 8, "Hello!", new Pokemon("eevee", 5), false]]);
 
 	var towndata = ["}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
 					")()()()()()()()()()()()()()()(",
@@ -435,7 +483,7 @@ window.onload = function () {
 		".": new PassingDataTile(true),
 		"#": new PassingDataTile(false),
 		"*": new Teleporter(0, 0, 0, 14, 9)
-	}, [], [new ActionEvent(7, 3, function() {
+	}, [], [new ActionEvent(7, 3, function () {
 		playerpoke.hp = playerpoke.stats.hp;
 	})], "pokecenter.png");
 
@@ -563,7 +611,7 @@ window.onload = function () {
 	var directionplayer = function (dir) {
 		if (onblock()) {
 			if (currentmap.get(playerx, playery).name === "tallgrass" && Math.floor(Math.random() * 7) === 0) {
-				var encounter = grasspokes[Math.floor(Math.random(grasspokes.length))];
+				var encounter = grasspokes[Math.floor(Math.random() * grasspokes.length)];
 				currentbattle = new Battle(playerpoke, encounter, true);
 				setstate("battle");
 			} else {
@@ -698,24 +746,36 @@ window.onload = function () {
 							currenttrainerbattleindex = trainer.index;
 						}
 					}
-					
+
 					var eventloc = null;
-					if(playerdir === UP) {
-						eventloc = {x: playerx, y: playery - 1};
+					if (playerdir === UP) {
+						eventloc = {
+							x: playerx,
+							y: playery - 1
+						};
 					}
-					if(playerdir === DOWN) {
-						eventloc = {x: playerx, y: playery + 1};
+					if (playerdir === DOWN) {
+						eventloc = {
+							x: playerx,
+							y: playery + 1
+						};
 					}
-					if(playerdir === LEFT) {
-						eventloc = {x: playerx - 1, y: playery};
+					if (playerdir === LEFT) {
+						eventloc = {
+							x: playerx - 1,
+							y: playery
+						};
 					}
-					if(playerdir === RIGHT) {
-						eventloc = {x: playerx + 1, y: playery};
+					if (playerdir === RIGHT) {
+						eventloc = {
+							x: playerx + 1,
+							y: playery
+						};
 					}
-					
+
 					console.log(eventloc);
 					var event = currentmap.eventat(eventloc.x, eventloc.y);
-					if(event) {
+					if (event) {
 						event.action();
 					}
 				}

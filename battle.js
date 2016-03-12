@@ -47,6 +47,15 @@ Battle.prototype.update = function () {
 		}
 	}
 	if (pickingmove) {
+		if(this.catchable && justpressedp) {
+			justpressedp = false;
+			
+			pc.push(this.opposing);
+			
+			caught = true;
+			setstate("overworld");
+		}
+		
 		if (justpressedone) {
 			justpressedone = false;
 			this.doTurn(0);

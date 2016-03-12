@@ -59,6 +59,19 @@ var pokedata = {
 			"spd": 35,
 			"spe": 72
 		},
+		"pidgey": {
+			"name": "Pidgey",
+			"type": "flying",
+			"moves": [
+				["tackle"]
+			],
+			"hp": 40,
+			"atk": 45,
+			"def": 40,
+			"spa": 35,
+			"spd": 35,
+			"spe": 56
+		},
 		"eevee": {
 			"name": "Eevee",
 			"type": "normal",
