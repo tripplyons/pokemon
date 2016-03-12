@@ -9,6 +9,21 @@ var pokedata = {
 			"name": "ThunderShock",
 			"damage": 50,
 			"type": "electric"
+		},
+        "kick": {
+			"name": "Kick",
+			"damage": 77,
+			"type": "Footy"
+		},
+         "headbutt": {
+			"name": "Headbutt",
+			"damage": 5,
+			"type": "normal"
+		},
+         "solve_rubiks_cube": {
+			"name": "Solve Rubiks Cube",
+			"damage": 111,
+			"type": "Mental"
 		}
 	},
 	"pokemon": {
@@ -17,7 +32,8 @@ var pokedata = {
 			"type": "electric",
 			"moves": [
 				["tackle"],
-				["tackle", "thundershock"]
+				["tackle", "thundershock"],
+                ["tackle", "thundershock", "kick"]
 			],
 			"hp": 35,
 			"atk": 55,
@@ -39,6 +55,7 @@ var pokedata = {
 			"spd": 35,
 			"spe": 72
 		},
+<<<<<<< Updated upstream
 		"eevee": {
 			"name": "Eevee",
 			"type": "normal",
@@ -51,6 +68,22 @@ var pokedata = {
 			"spa": 45,
 			"spd": 65,
 			"spe": 55
+=======
+        "trippymon": {
+			"name": "Trippymon",
+			"type": "steam-powered",
+			"moves": [
+				["head-butt"],
+                ["head-butt", "solve_rubiks_cube"]
+			],
+			"hp": 10,
+			"atk": 2,
+			"def": 100,
+			"spa": 100,
+			"spd": 100,
+			"spe": 100
+>>>>>>> Stashed changes
 		}
-	}
+	},
+    
 };
