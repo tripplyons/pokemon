@@ -10,21 +10,12 @@ var pokedata = {
 			"damage": 50,
 			"type": "electric"
 		},
-        "kick": {
-			"name": "Kick",
-			"damage": 77,
-			"type": "Footy"
-		},
          "headbutt": {
 			"name": "Headbutt",
 			"damage": 5,
 			"type": "normal"
-		},
-         "solve_rubiks_cube": {
-			"name": "Solve Rubiks Cube",
-			"damage": 111,
-			"type": "Mental"
 		}
+        
 	},
 	"pokemon": {
 		"pikachu": {
@@ -55,7 +46,19 @@ var pokedata = {
 			"spd": 35,
 			"spe": 72
 		},
-<<<<<<< Updated upstream
+		"diglet": {
+			"name": "Diglet",
+			"type": "normal",
+			"moves": [
+				["tackle"]
+			],
+			"hp": 30,
+			"atk": 56,
+			"def": 35,
+			"spa": 25,
+			"spd": 35,
+			"spe": 72
+		},
 		"eevee": {
 			"name": "Eevee",
 			"type": "normal",
@@ -68,21 +71,7 @@ var pokedata = {
 			"spa": 45,
 			"spd": 65,
 			"spe": 55
-=======
-        "trippymon": {
-			"name": "Trippymon",
-			"type": "steam-powered",
-			"moves": [
-				["head-butt"],
-                ["head-butt", "solve_rubiks_cube"]
-			],
-			"hp": 10,
-			"atk": 2,
-			"def": 100,
-			"spa": 100,
-			"spd": 100,
-			"spe": 100
->>>>>>> Stashed changes
+
 		}
 	},
     
