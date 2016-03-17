@@ -46,8 +46,8 @@ var pokedata = {
 			"spd": 35,
 			"spe": 72
 		},
-		"diglet": {
-			"name": "Diglet",
+		"diglett": {
+			"name": "Diglett",
 			"type": "normal",
 			"moves": [
 				["tackle"]
