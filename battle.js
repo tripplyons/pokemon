@@ -30,8 +30,8 @@ Battle.prototype.draw = function (ctx) {
 };
 
 Battle.prototype.update = function () {
-	if (justpressedaction) {
-		justpressedaction = false;
+	if (justpressed[ACTION]) {
+		justpressed[ACTION] = false;
 		if (!pickingmove) {
 			textbeingshown = null;
 			pickingmove = true;
@@ -47,8 +47,8 @@ Battle.prototype.update = function () {
 		}
 	}
 	if (pickingmove) {
-		if(this.catchable && justpressedp) {
-			justpressedp = false;
+		if(this.catchable && justpressed[P]) {
+			justpressed[P] = false;
 			
 			pc.push(this.opposing);
 			
@@ -56,16 +56,16 @@ Battle.prototype.update = function () {
 			setstate("overworld");
 		}
 		
-		if (justpressedone) {
-			justpressedone = false;
+		if (justpressed[ONE]) {
+			justpressed[ONE] = false;
 			this.doTurn(0);
 		}
-		if (this.playerpoke.moves.length > 1 && justpressedtwo) {
-			justpressedtwo = false;
+		if (this.playerpoke.moves.length > 1 && justpressed[TWO]) {
+			justpressed[TWO] = false;
 			this.doTurn(1);
 		}
-		if (this.playerpoke.moves.length > 2 && justpressedthree) {
-			justpressedthree = false;
+		if (this.playerpoke.moves.length > 2 && justpressed[THREE]) {
+			justpressed[THREE] = false;
 			this.doTurn(2);
 		}
 	}

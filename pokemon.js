@@ -9,6 +9,7 @@ var Pokemon = function (name, level, exp) {
 	this.back = new Image();
 	this.back.src = "pokesprites/" + this.name + "-back.png";
 	this.exp = exp || 0;
+	this.type = pokedata["pokemon"][this.name]["type"];
 }
 
 Pokemon.prototype.getMoves = function () {
@@ -43,6 +44,12 @@ Pokemon.prototype.takeDamage = function (otherpoke, move) {
 	if (pokedata["pokemon"][otherpoke.name]["type"] === pokedata["moves"][move]["type"]) {
 		damage *= 1.5;
 	}
+	var modifier = 1;
+	if(pokedata["types"][pokedata["moves"][move]["type"]]["effective"].indexOf(this.type) !== -1) {
+		console.log("EFFECTIVE");
+		modifier *= 2;
+	}
+	damage *= modifier;
 	damage = Math.round(damage);
 
 	this.hp -= damage;

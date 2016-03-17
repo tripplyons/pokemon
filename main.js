@@ -21,6 +21,7 @@ var ONE = 5;
 var TWO = 6;
 var THREE = 7;
 var P = 8;
+var KEYNUM = 9;
 
 var caught = false;
 
@@ -94,17 +95,10 @@ if (usingsave) {
 	}
 }
 console.log(playerpoke);
-var keys = [
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false
-];
+var keys = [];
+for (var i = 0; i < KEYNUM; i++) {
+	keys.push(false);
+}
 var savecounter = 0;
 var savecountdown = 300;
 var pickingmove = false;
@@ -201,7 +195,7 @@ var setstate = function (name) {
 		} else {
 			if (caught) {
 				caught = false;
-				
+
 				textbeingshown = "Caught the wild pokemon.";
 			} else {
 				money = Math.round(money / 2);
@@ -231,11 +225,10 @@ var setstate = function (name) {
 	}
 }
 
-var justpressedaction = false;
-var justpressedone = false;
-var justpressedtwo = false;
-var justpressedthree = false;
-var justpressedp = false;
+var justpressed = [];
+for (var i = 0; i < KEYNUM; i++) {
+	justpressed.push(false);
+}
 
 document.addEventListener("keydown", function (e) {
 	e = e || window.event;
@@ -253,35 +246,35 @@ document.addEventListener("keydown", function (e) {
 	}
 	if (e.keyCode === 32) {
 		if (!keys[ACTION]) {
-			justpressedaction = true;
+			justpressed[ACTION] = true;
 		}
 
 		keys[ACTION] = true;
 	}
 	if (e.keyCode === 49) {
 		if (!keys[ONE]) {
-			justpressedone = true;
+			justpressed[ONE] = true;
 		}
 
 		keys[ONE] = true;
 	}
 	if (e.keyCode === 50) {
 		if (!keys[TWO]) {
-			justpressedtwo = true;
+			justpressed[TWO] = true;
 		}
 
 		keys[TWO] = true;
 	}
 	if (e.keyCode === 51) {
 		if (!keys[THREE]) {
-			justpressedthree = true;
+			justpressed[THREE] = true;
 		}
 
 		keys[THREE] = true;
 	}
 	if (e.keyCode === 80) {
 		if (!keys[P]) {
-			justpressedp = true;
+			justpressed[P] = true;
 		}
 
 		keys[P] = true;
@@ -306,19 +299,19 @@ document.addEventListener("keyup", function (e) {
 	}
 	if (e.keyCode === 49) {
 		keys[ONE] = false;
-		justpressedone = false;
+		justpressed[ONE] = false;
 	}
 	if (e.keyCode === 50) {
 		keys[TWO] = false;
-		justpressedtwo = false;
+		justpressed[TWO] = false;
 	}
 	if (e.keyCode === 51) {
 		keys[THREE] = false;
-		justpressedthree = false;
+		justpressed[THREE] = false;
 	}
 	if (e.keyCode === 80) {
 		keys[P] = false;
-		justpressedp = false;
+		justpressed[P] = false;
 	}
 });
 
@@ -622,7 +615,7 @@ window.onload = function () {
 
 	tileset.onload = function () {
 		setInterval(function () {
-			if (justpressedaction) {
+			if (justpressed[ACTION]) {
 				console.log("ACTION");
 			}
 
@@ -689,8 +682,8 @@ window.onload = function () {
 						}
 					}
 				} else {
-					if (justpressedaction) {
-						justpressedaction = false;
+					if (justpressed[ACTION]) {
+						justpressed[ACTION] = false;
 						textbeingshown = null;
 						if (battlingaftertrainertext) {
 							battlingaftertrainertext = false;
@@ -699,12 +692,12 @@ window.onload = function () {
 					}
 				}
 
-				if (playerdir === UP && justpressedaction && onblock() && currentmap.get(playerx, playery - 1).name === "sign") {
-					justpressedaction = false;
+				if (playerdir === UP && justpressed[ACTION] && onblock() && currentmap.get(playerx, playery - 1).name === "sign") {
+					justpressed[ACTION] = false;
 					textbeingshown = currentmap.get(playerx, playery - 1).text;
 				}
-				if (justpressedaction && onblock()) {
-					justpressedaction = false;
+				if (justpressed[ACTION] && onblock()) {
+					justpressed[ACTION] = false;
 					if (playerdir === UP && currentmap.trainerat(playerx, playery - 1)) {
 						var trainer = currentmap.trainerat(playerx, playery - 1);
 						textbeingshown = trainer.trainer[3];

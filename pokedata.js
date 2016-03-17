@@ -1,4 +1,17 @@
 var pokedata = {
+	"types": {
+		"normal": {
+			"effective": []
+		},
+		"flying": {
+			"effective": []
+		},
+		"electric": {
+			"effective": [
+				"flying"
+			]
+		}
+	},
 	"moves": {
 		"tackle": {
 			"name": "Tackle",
@@ -10,12 +23,12 @@ var pokedata = {
 			"damage": 50,
 			"type": "electric"
 		},
-         "headbutt": {
+		"headbutt": {
 			"name": "Headbutt",
 			"damage": 5,
 			"type": "normal"
 		}
-        
+
 	},
 	"pokemon": {
 		"pikachu": {
@@ -87,5 +100,5 @@ var pokedata = {
 
 		}
 	},
-    
+
 };
