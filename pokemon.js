@@ -74,3 +74,7 @@ Pokemon.prototype.getExp = function (expAmount) {
 	this.moves = this.getMoves();
 	this.stats = this.getStats();
 }
+
+Pokemon.prototype.catchProbs = function(ballModifier) {
+	
+}
