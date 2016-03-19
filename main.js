@@ -1,9 +1,12 @@
 var usingsave = (typeof (Storage) !== "undefined") && localStorage.getItem("playerpokename");
 
-var overworldmusic = new Audio("route-1.mp3");
-overworldmusic.play();
-overworldmusic.addEventListener("ended", function (e) {
-	overworldmusic.play();
+var pokecentermus = new Audio("pokecenter.mp3");
+pokecentermus.addEventListener("ended", function (e) {
+	pokecentermus.play();
+}, false);
+var route1mus = new Audio("route-1.mp3");
+route1mus.addEventListener("ended", function (e) {
+	route1mus.play();
 }, false);
 var battlemusic = new Audio("wild-battle.mp3");
 battlemusic.addEventListener("ended", function (e) {
@@ -211,7 +214,8 @@ var setstate = function (name) {
 		}
 	}
 	if (name === "battle") {
-		overworldmusic.pause();
+		currentmap.music.pause();
+		battlemusic.currentTime = 0;
 		battlemusic.play();
 		textbeingshown = "A battle has started!";
 		pickingmove = false;
@@ -220,7 +224,7 @@ var setstate = function (name) {
 	if (name === "overworld") {
 		battlemusic.pause();
 		battlemusic.currentTime = 0;
-		overworldmusic.play();
+		currentmap.music.play();
 		state = "overworld";
 	}
 }
@@ -447,7 +451,7 @@ window.onload = function () {
 		"w": new Teleporter(2, 7, 2, 7, 7),
 		"x": new TileType("x", 3, 7, false),
 		"y": new TileType("y", 4, 7, false),
-	}), [[garySprite, 11, 8, "Hello!", new Pokemon("eevee", 5), false]]);
+	}), route1mus, [[garySprite, 11, 8, "Hello!", new Pokemon("eevee", 5), false]]);
 
 	var towndata = ["}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
 					")()()()()()()()()()()()()()()(",
@@ -461,7 +465,7 @@ window.onload = function () {
 
 	var town = new Map(tileset, towndata, mergeoptions(basedatamap, {
 		"*": new Teleporter(1, 0, 0, 23, 11)
-	}), []);
+	}), route1mus);
 
 	var pokecenterdata = ["###############",
 						  "###############",
@@ -476,15 +480,18 @@ window.onload = function () {
 		".": new PassingDataTile(true),
 		"#": new PassingDataTile(false),
 		"*": new Teleporter(0, 0, 0, 14, 9)
-	}, [], [new ActionEvent(7, 3, function () {
+	}, pokecentermus, [], [new ActionEvent(7, 3, function () {
 		playerpoke.hp = playerpoke.stats.hp;
 	})], "pokecenter.png");
 
 	var maps = [route, town, pokecenter];
 
 	var setmap = function (index) {
+		currentmap.music.pause();
+		currentmap.music.currentTime = 0;
 		currentmapindex = index;
 		currentmap = maps[currentmapindex];
+		currentmap.music.play();
 	}
 
 	if (usingsave) {
