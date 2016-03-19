@@ -37,7 +37,7 @@ var pokedata = {
 			"moves": [
 				["tackle"],
 				["tackle", "thundershock"],
-                ["tackle", "thundershock", "kick"]
+                ["tackle", "thundershock"]
 			],
 			"hp": 35,
 			"atk": 55,
