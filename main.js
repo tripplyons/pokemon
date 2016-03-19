@@ -57,7 +57,6 @@ var resettinggame = "false";
 if (usingsave) {
 	storedresettinggame = localStorage.getItem("resettinggame");
 	if (typeof (storedresettinggame) !== "undefined" && storedresettinggame != null) {
-		console.log("SET", storedresettinggame);
 		resettinggame = storedresettinggame;
 	}
 	if (resettinggame === "false") {
@@ -90,14 +89,12 @@ if (usingsave) {
 				pc.push(new Pokemon(storedpc[i].name, storedpc[i].level, storedpc[i].exp));
 				i++;
 			}
-			console.log(pc);
 		}
 	} else {
 		usingsave = false;
 		localStorage.setItem("resettinggame", "false");
 	}
 }
-console.log(playerpoke);
 var keys = [];
 for (var i = 0; i < KEYNUM; i++) {
 	keys.push(false);
@@ -112,7 +109,6 @@ var canvaswidth;
 var canvasheight;
 var shownTilesWidth;
 var shownTilesHeight;
-//console.log(playerx, playery);
 var waitingforonblocksave = false;
 var grasspokes = [
 	new Pokemon("rattata", 3),
@@ -122,7 +118,6 @@ var grasspokes = [
 	new Pokemon("pidgey", 4),
 	new Pokemon("pidgey", 5)
 ];
-//console.log(playerpoke);
 var playerscreenx;
 var playerscreeny;
 var playerstopping = false;
@@ -171,7 +166,6 @@ var setstate = function (name) {
 			grasspokes[i].hp = grasspokes[i].stats["hp"];
 		}
 		if (winlevel) {
-			console.log("WON");
 			var oldlevel = playerpoke.level;
 
 			var moneywon = Math.round(winlevel * 5 + (Math.random() * 5 + 8));
@@ -190,7 +184,6 @@ var setstate = function (name) {
 
 			money += moneywon;
 			if (currenttrainerbattleindex != null) {
-				console.log("TRAINER WIN");
 				currentmap.trainers[currenttrainerbattleindex][5] = true;
 			}
 
@@ -496,9 +489,7 @@ window.onload = function () {
 
 	if (usingsave) {
 		var trainersbeaten = JSON.parse(localStorage.getItem("trainersbeaten"));
-		console.log(trainersbeaten);
 		if (typeof (trainersbeaten) !== "undefined" && trainersbeaten != null) {
-			console.log("SET TRAINERS BEATEN");
 			for (var i = 0; i < maps.length; i++) {
 				for (var j = 0; j < maps[i].trainers.length; j++) {
 					maps[i].trainers[j][5] = trainersbeaten[i][j];
@@ -622,11 +613,6 @@ window.onload = function () {
 
 	tileset.onload = function () {
 		setInterval(function () {
-			if (justpressed[ACTION]) {
-				console.log("ACTION");
-			}
-
-			//			console.log("TICK");
 			draw();
 
 			if (state === "overworld") {
@@ -772,8 +758,6 @@ window.onload = function () {
 							y: playery
 						};
 					}
-
-					console.log(eventloc);
 					var event = currentmap.eventat(eventloc.x, eventloc.y);
 					if (event) {
 						event.action();
