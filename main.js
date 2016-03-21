@@ -110,14 +110,6 @@ var canvasheight;
 var shownTilesWidth;
 var shownTilesHeight;
 var waitingforonblocksave = false;
-var grasspokes = [
-	new Pokemon("rattata", 3),
-	new Pokemon("rattata", 4),
-	new Pokemon("rattata", 5),
-	new Pokemon("pidgey", 3),
-	new Pokemon("pidgey", 4),
-	new Pokemon("pidgey", 5)
-];
 var playerscreenx;
 var playerscreeny;
 var playerstopping = false;
@@ -162,8 +154,8 @@ for (var i = 0; i < 4; i++) {
 
 var setstate = function (name) {
 	if (state === "battle") {
-		for (var i = 0; i < grasspokes.length; i++) {
-			grasspokes[i].hp = grasspokes[i].stats["hp"];
+		for (var i = 0; i < currentmap.grasspokes.length; i++) {
+			currentmap.grasspokes[i].hp = currentmap.grasspokes[i].stats["hp"];
 		}
 		if (winlevel) {
 			var oldlevel = playerpoke.level;
@@ -444,13 +436,20 @@ window.onload = function () {
 		"w": new Teleporter(2, 7, 2, 7, 7),
 		"x": new TileType("x", 3, 7, false),
 		"y": new TileType("y", 4, 7, false),
-	}), route1mus, [[garySprite, 11, 8, "Hello!", new Pokemon("eevee", 5), false]]);
+	}), route1mus, [
+		new Pokemon("rattata", 3),
+		new Pokemon("rattata", 4),
+		new Pokemon("rattata", 5),
+		new Pokemon("pidgey", 3),
+		new Pokemon("pidgey", 4),
+		new Pokemon("pidgey", 5)
+	], [[garySprite, 11, 8, "Hello!", new Pokemon("eevee", 5), false]]);
 
 	var towndata = ["}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
 					")()()()()()()()()()()()()()()(",
 					"}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
 					")()()()[][][][][][][]()()()()(",
-					"}{}{}{}*.............{}{}{}{}{",
+					"}{}{}{}*..###########{}{}{}{}{",
 					")()()()/\\/\\/\\/\\/\\/\\/\\()()()()(",
 					"}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{",
 					")()()()()()()()()()()()()()()(",
@@ -458,7 +457,11 @@ window.onload = function () {
 
 	var town = new Map(tileset, towndata, mergeoptions(basedatamap, {
 		"*": new Teleporter(1, 0, 0, 23, 11)
-	}), route1mus);
+	}), route1mus, [
+		new Pokemon("diglett", 6),
+		new Pokemon("diglett", 7),
+		new Pokemon("diglett", 8)
+	]);
 
 	var pokecenterdata = ["###############",
 						  "###############",
@@ -473,7 +476,7 @@ window.onload = function () {
 		".": new PassingDataTile(true),
 		"#": new PassingDataTile(false),
 		"*": new Teleporter(0, 0, 0, 14, 9)
-	}, pokecentermus, [], [new ActionEvent(7, 3, function () {
+	}, pokecentermus, [], [], [new ActionEvent(7, 3, function () {
 		playerpoke.hp = playerpoke.stats.hp;
 	})], "pokecenter.png");
 
@@ -602,7 +605,7 @@ window.onload = function () {
 	var directionplayer = function (dir) {
 		if (onblock()) {
 			if (currentmap.get(playerx, playery).name === "tallgrass" && Math.floor(Math.random() * 7) === 0) {
-				var encounter = grasspokes[Math.floor(Math.random() * grasspokes.length)];
+				var encounter = currentmap.grasspokes[Math.floor(Math.random() * currentmap.grasspokes.length)];
 				currentbattle = new Battle(playerpoke, encounter, true);
 				setstate("battle");
 			} else {

@@ -46,7 +46,7 @@ Pokemon.prototype.takeDamage = function (otherpoke, move) {
 	}
 	var modifier = 1;
 	if(pokedata["types"][pokedata["moves"][move]["type"]]["effective"].indexOf(this.type) !== -1) {
-		console.log("EFFECTIVE");
+//		console.log("EFFECTIVE");
 		modifier *= 2;
 	}
 	damage *= modifier;
