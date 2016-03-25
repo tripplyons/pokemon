@@ -1,13 +1,25 @@
 var pokedata = {
 	"types": {
 		"normal": {
-			"effective": []
+			"effective": [],
+			"noteffective": []
 		},
 		"flying": {
 			"effective": []
 		},
 		"electric": {
 			"effective": [
+				"flying"
+			],
+			"noteffective": [
+				"ground"
+			]
+		},
+		"ground": {
+			"effective": [
+				"electric"
+			],
+			"noteffective": [
 				"flying"
 			]
 		}
@@ -36,8 +48,7 @@ var pokedata = {
 			"type": "electric",
 			"moves": [
 				["tackle"],
-				["tackle", "thundershock"],
-                ["tackle", "thundershock"]
+				["tackle", "thundershock"]
 			],
 			"hp": 35,
 			"atk": 55,
@@ -63,7 +74,7 @@ var pokedata = {
 		},
 		"diglett": {
 			"name": "Diglett",
-			"type": "normal",
+			"type": "ground",
 			"moves": [
 				["tackle"]
 			],
