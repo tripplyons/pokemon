@@ -121,7 +121,7 @@ var waitingforonblocksave = false;
 var playerscreenx;
 var playerscreeny;
 var playerstopping = false;
-var fps = 60;
+var fps = 66;
 var dt = Math.round(1000 / fps);
 // DT in Seconds
 var dts = dt / 1000;
