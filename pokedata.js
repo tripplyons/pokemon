@@ -115,6 +115,5 @@ var pokedata = {
 			"catchrate": 45
 
 		}
-	},
-
+	}
 };
