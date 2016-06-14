@@ -37,7 +37,7 @@ var pokedata = {
 		},
 		"headbutt": {
 			"name": "Headbutt",
-			"damage": 5,
+			"damage": 70,
 			"type": "normal"
 		}
 
@@ -48,7 +48,8 @@ var pokedata = {
 			"type": "electric",
 			"moves": [
 				["tackle"],
-				["tackle", "thundershock"]
+				["tackle", "thundershock"],
+				["tackle", "thundershock", "headbutt"]
 			],
 			"hp": 35,
 			"atk": 55,
